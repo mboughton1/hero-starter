@@ -35,9 +35,43 @@ The "move" function should accept two arguments that the website will be passing
 
 */
 
+ 
+
 // Strategy definitions
 var moves = {
-    // Aggressor
+ 
+
+  // Matt 1
+    // This hero will attempt to capture enemy diamond mines and survive.
+    mattOne: function (gameData, helpers) {
+        var myHero = gameData.activeHero;
+
+        // Get stats on the nearest health well
+        var healthWellStats = helpers.findNearestObjectDirectionAndDistance(gameData.board, myHero, function (boardTile) {
+            if (boardTile.type === 'HealthWell') {
+                return true;
+            }
+        });
+        var distanceToHealthWell = healthWellStats.distance;
+        var directionToHealthWell = healthWellStats.direction;
+		
+	
+
+        if (myHero.health < 40) {
+            // Heal no matter what if low health
+            return directionToHealthWell;
+        } else if (myHero.health < 100 && distanceToHealthWell === 1) {
+            // Heal if you aren't full health and are close to a health well already
+            return directionToHealthWell;
+        } else {
+            // If healthy, go capture a diamond mine!
+            return helpers.findNearestNonTeamDiamondMine(gameData);
+        }
+    },
+
+
+
+ // Aggressor
     aggressor: function (gameData, helpers) {
         // Here, we ask if your hero's health is below 30
         if (gameData.activeHero.health <= 30){
@@ -180,7 +214,7 @@ var moves = {
 };
 
 // Set our hero's strategy
-var move =  moves.aggressor;
+var move =  moves.mattOne;
 
 // Export the move function here
 module.exports = move;
